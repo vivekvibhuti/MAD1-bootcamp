@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
 
@@ -14,17 +14,22 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        # check for correct credentials later on
+        #
+        #
+        return redirect(url_for("dashboard", username=username))
 
-        return render_template("dashboard.html", username=username, password=password)
+        # if credentials are incorrect, render the login form again
+        # return render_template("login.html")
     return render_template("login.html")
 
 
 # faulty code
-@app.route("/dashboard", methods=["POST", "GET"])
+@app.route("/dashboard", methods=["GET"])
 def dashboard():
-    if request.method == "POST":
-        return render_template("dashboard.html")
-    return render_template("dashboard.html", username=request.args.get("username"))
+    username = request.args.get("username")
+    print(username)
+    return render_template("dashboard.html", username=username)
 
 
 if __name__ == "__main__":
