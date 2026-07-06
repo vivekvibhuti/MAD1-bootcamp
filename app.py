@@ -58,5 +58,32 @@ def register():
     return render_template("register.html")
 
 
+# TODO:
+# 1 create a page to show all users
+# 2. create endpoint/route/handler to show all the users
+#
+@app.route("/users")
+def users():
+    all_users = User.query.all()
+    return render_template("allusers.html", users=all_users)
+
+
+# dynamic route now:
+@app.route("/user/<int:user_id>")
+def user(user_id):
+    user = User.query.get(user_id)
+    return render_template("user_profile.html", user=user)
+
+
+# delete route
+@app.route("/delete_user/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    user = db.session.get(User, user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+    return redirect(url_for("users"))
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
