@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for
 
-from models import User, db, db_init
+from models import GroceryItem, Purchase, User, db, db_init
 
 app = Flask(__name__)
 
@@ -86,4 +86,4 @@ def delete_user(user_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
