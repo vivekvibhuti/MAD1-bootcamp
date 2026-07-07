@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Edit Grocery Item</title>
+    </head>
+    <body>
+        <h1>Edit Grocery Item</h1>
+        <form action="/grocery/{{ item.id }}/edit" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ item.name }}" required /><br />
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" step="0.01" value="{{ item.price }}" required /><br />
+            <label for="description">Description:</label>
+            <textarea id="description" name="description">{{ item.description or '' }}</textarea><br />
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" value="{{ item.stock }}" /><br />
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="/dashboard">Back to Dashboard</a>
+    </body>
+</html>

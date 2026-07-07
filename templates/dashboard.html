@@ -6,6 +6,7 @@
     <body>
         <nav>
             <a href="/">Logout</a>
+            <a href="/profile/edit">Edit Profile</a>
             <form style="display:inline" method="get" action="/dashboard">
                 <input type="text" name="search" placeholder="Search items..." />
                 <button type="submit">Search</button>
@@ -22,6 +23,12 @@
             <li>
                 {{ item.name }} - ${{ item.price }}
                 {% if item.stock > 0 %}({{ item.stock }} in stock){% else %}(Out of stock){% endif %}
+                {% if allowed_to_edit|default(False) %}
+                <a href="/grocery/{{ item.id }}/edit">Edit</a>
+                <form style="display:inline" action="/grocery/{{ item.id }}/delete" method="post">
+                    <button type="submit">Delete</button>
+                </form>
+                {% endif %}
             </li>
             {% endfor %}
         </ul>
