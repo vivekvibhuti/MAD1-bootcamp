@@ -2,6 +2,9 @@ from flask import Flask, redirect, render_template, request, session, url_for
 
 from admin_stats import register_routes
 from models import GroceryItem, Purchase, User, db, db_init
+
+# from auth import register_routes as register_auth
+# from grocery import register_routes as register_grocery
 # from helpers import is_loggedin, is_allowed_edit, current_user, is_admin, is_store_manager, login_required
 
 app = Flask(__name__)
@@ -12,6 +15,9 @@ app.secret_key = "replace_with_a_random_secret_key"
 db_init(app)
 
 register_routes(app)
+# register_auth(app)
+# register_grocery(app)
+
 
 # default location for our url
 @app.route("/")
@@ -48,7 +54,9 @@ def dashboard():
     username = request.args.get("username")
     print(username)
     grocery_items = GroceryItem.query.all()
-    return render_template("dashboard.html", username=username, grocery_items=grocery_items)
+    return render_template(
+        "dashboard.html", username=username, grocery_items=grocery_items
+    )
 
 
 # proper dashboard with helpers and session — uncomment and comment out the original:
@@ -124,130 +132,9 @@ def delete_user(user_id):
 #     return redirect(url_for("users"))
 
 
-"""
-Session-based login / logout / dashboard (uncomment and comment out the originals to use)
-Replace the secret_key above with a real random key before using in production.
-Uncomment 'from helpers import ...' at the top first.
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
-            session["user_id"] = user.id
-            session["username"] = user.username
-            session["role"] = user.role
-            return redirect(url_for("dashboard"))
-        return render_template("login.html")
-    return render_template("login.html")
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("home"))
-
-
-@app.route("/dashboard", methods=["GET"])
-def dashboard():
-    if not is_loggedin():
-        return redirect(url_for("login"))
-    grocery_items = GroceryItem.query.all()
-    return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items, allowed_to_edit=is_allowed_edit())
-"""
-
-"""
-Grocery CRUD, profile edit, history, logout — uncomment when routes are needed.
-
-from flask import redirect, render_template, request, url_for
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("home"))
-
-
-@app.route("/grocery/create", methods=["GET", "POST"])
-def create_grocery_item():
-    if request.method == "POST":
-        name = request.form["name"]
-        price = float(request.form["price"])
-        description = request.form.get("description", "")
-        stock = int(request.form.get("stock", 0))
-        item = GroceryItem(name=name, price=price, description=description, stock=stock)
-        db.session.add(item)
-        db.session.commit()
-        return redirect(url_for("dashboard"))
-    return render_template("create_grocery_item.html")
-
-
-@app.route("/grocery/<int:item_id>/edit", methods=["GET", "POST"])
-def edit_grocery_item(item_id):
-    item = GroceryItem.query.get(item_id)
-    if not item:
-        return redirect(url_for("dashboard"))
-    if request.method == "POST":
-        item.name = request.form["name"]
-        item.price = float(request.form["price"])
-        item.description = request.form.get("description", "")
-        item.stock = int(request.form.get("stock", 0))
-        db.session.commit()
-        return redirect(url_for("dashboard"))
-    return render_template("edit_grocery_item.html", item=item)
-
-
-@app.route("/grocery/<int:item_id>/delete", methods=["POST"])
-def delete_grocery_item(item_id):
-    item = GroceryItem.query.get(item_id)
-    if item:
-        db.session.delete(item)
-        db.session.commit()
-    return redirect(url_for("dashboard"))
-
-
-@app.route("/profile/edit", methods=["GET", "POST"])
-def edit_profile():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    user = User.query.get(session["user_id"])
-    if request.method == "POST":
-        user.username = request.form["username"]
-        user.password = request.form["password"]
-        db.session.commit()
-        session["username"] = user.username
-        return redirect(url_for("dashboard"))
-    return render_template("profile_edit.html", user=user)
-
-
-@app.route("/history/<int:user_id>")
-def purchase_history(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return redirect(url_for("dashboard"))
-    return render_template("history.html", user=user)
-"""
-
-
-"""
-Search results — uncomment the dashboard version below and comment out the original.
-
-from flask import render_template, request
-from sqlalchemy import or_
-
-@app.route("/dashboard", methods=["GET"])
-def dashboard():
-    search = request.args.get("search", "")
-    if search:
-        user_results = User.query.filter(User.username.contains(search)).all()
-        item_results = GroceryItem.query.filter(GroceryItem.name.contains(search)).all()
-        return render_template("search_results.html", query=search, user_results=user_results, item_results=item_results)
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    grocery_items = GroceryItem.query.all()
-    return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items, allowed_to_edit=is_allowed_edit())
-"""
+# Session-based auth routes moved to auth.py — uncomment in imports and register calls to use.
+# Grocery CRUD routes moved to grocery.py — uncomment in imports and register calls to use.
+# Helper functions moved to helpers.py — uncomment the import to use.
 
 
 """
