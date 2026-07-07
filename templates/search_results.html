@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Search Results</title>
+    </head>
+    <body>
+        <h1>Search Results for "{{ query }}"</h1>
+
+        <h2>Users</h2>
+        {% if user_results %}
+        <ul>
+            {% for user in user_results %}
+            <li>{{ user.username }} ({{ user.role }})</li>
+            {% endfor %}
+        </ul>
+        <a href="/users?search={{ query }}">View More Users</a>
+        {% else %}
+        <p>No users found for "{{ query }}".</p>
+        {% endif %}
+
+        <h2>Grocery Items</h2>
+        {% if item_results %}
+        <ul>
+            {% for item in item_results %}
+            <li>{{ item.name }} - ${{ item.price }} ({{ item.stock }} in stock)</li>
+            {% endfor %}
+        </ul>
+        <a href="/dashboard?search={{ query }}">View More Items</a>
+        {% else %}
+        <p>No items found for "{{ query }}".</p>
+        {% endif %}
+
+        <a href="/dashboard">Back to Dashboard</a>
+    </body>
+</html>
