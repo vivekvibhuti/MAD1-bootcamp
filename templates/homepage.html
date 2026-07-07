@@ -4,8 +4,14 @@
         <title>Homepage</title>
     </head>
     <body>
+        <nav>
+            {% if is_loggedin|default(False) %}
+            <a href="/logout">Logout</a>
+            {% else %}
+            <a href="/login">Login</a>
+            {% endif %}
+        </nav>
         <h1>Welcome to the Homepage</h1>
-        <!-- you can redirect to the login page-->
-        <a href="/login">Login</a>
+        <a href="/register">Register as user</a>
     </body>
 </html>
