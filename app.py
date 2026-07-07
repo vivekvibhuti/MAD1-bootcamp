@@ -1,10 +1,11 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, session, url_for
 
 from models import GroceryItem, Purchase, User, db, db_init
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///bootcamp.db"
+app.secret_key = "replace_with_a_random_secret_key"
 
 db_init(app)
 
@@ -84,6 +85,39 @@ def delete_user(user_id):
         db.session.commit()
     return redirect(url_for("users"))
 
+
+"""
+Session-based login / logout / dashboard (uncomment and comment out the originals to use)
+Replace the secret_key above with a real random key before using in production.
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session["user_id"] = user.id
+            session["username"] = user.username
+            session["role"] = user.role
+            return redirect(url_for("dashboard"))
+        return render_template("login.html")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
+
+
+@app.route("/dashboard", methods=["GET"])
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    grocery_items = GroceryItem.query.all()
+    return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items)
+"""
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
