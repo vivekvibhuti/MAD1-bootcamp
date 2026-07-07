@@ -22,7 +22,7 @@ def is_store_manager():
 
 
 def is_allowed_edit():
-    return session.get("role") in ("admin", "store_manager")
+    return session.get("role") == "store_manager"
 
 
 def login_required():

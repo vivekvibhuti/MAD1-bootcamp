@@ -5,10 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def db_init(app):
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
+def seed_admin():
+    if not User.query.filter_by(role="admin").first():
+        admin = User(username="admin", password="admin", role="admin", approved=True)
+        db.session.add(admin)
+        db.session.commit()
 
 
 class User(db.Model):
@@ -16,6 +17,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), default='user')
+    approved = db.Column(db.Boolean, default=False)
 
 
 class GroceryItem(db.Model):

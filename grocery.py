@@ -1,6 +1,7 @@
 from flask import redirect, render_template, request, session, url_for
 
-from models import GroceryItem, User, db
+from helpers import is_loggedin
+from models import GroceryItem, Purchase, User, db
 
 
 def register_routes(app):
@@ -53,6 +54,32 @@ def register_routes(app):
             session["username"] = user.username
             return redirect(url_for("dashboard"))
         return render_template("profile_edit.html", user=user)
+
+    @app.route("/shop")
+    def shop():
+        items = GroceryItem.query.all()
+        return render_template("shop.html", items=items)
+
+    @app.route("/grocery/<int:item_id>/buy", methods=["POST"])
+    def buy_item(item_id):
+        if not is_loggedin():
+            return redirect(url_for("login"))
+        item = GroceryItem.query.get(item_id)
+        if not item or item.stock < 1:
+            return redirect(url_for("shop"))
+        quantity = int(request.form.get("quantity", 1))
+        if quantity < 1 or quantity > item.stock:
+            return redirect(url_for("shop"))
+        purchase = Purchase(
+            user_id=session["user_id"],
+            grocery_item_id=item.id,
+            quantity=quantity,
+            total_price=round(quantity * item.price, 2),
+        )
+        item.stock -= quantity
+        db.session.add(purchase)
+        db.session.commit()
+        return redirect(url_for("shop"))
 
     @app.route("/history/<int:user_id>")
     def purchase_history(user_id):

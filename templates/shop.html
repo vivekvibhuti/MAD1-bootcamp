@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Shop</title>
+    </head>
+    <body>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <h1>Grocery Shop</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Buy</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>${{ item.price }}</td>
+                    <td>{% if item.stock > 0 %}{{ item.stock }}{% else %}Out of stock{% endif %}</td>
+                    <td>
+                        {% if item.stock > 0 %}
+                        <form method="post" action="/grocery/{{ item.id }}/buy">
+                            <input type="number" name="quantity" value="1" min="1" max="{{ item.stock }}" style="width:50px" />
+                            <button type="submit">Buy</button>
+                        </form>
+                        {% else %}
+                        <span>Unavailable</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/dashboard">Back to Dashboard</a>
+    </body>
+</html>
