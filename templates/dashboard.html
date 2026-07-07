@@ -7,6 +7,9 @@
         <nav>
             <a href="/">Logout</a>
             <a href="/profile/edit">Edit Profile</a>
+            {% if is_admin|default(False) %}
+            <a href="/admin/stats">Stats</a>
+            {% endif %}
             <form style="display:inline" method="get" action="/dashboard">
                 <input type="text" name="search" placeholder="Search items..." />
                 <button type="submit">Search</button>

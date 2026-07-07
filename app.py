@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 
+from admin_stats import register_routes
 from models import GroceryItem, Purchase, User, db, db_init
 # from helpers import is_loggedin, is_allowed_edit, current_user, is_admin, is_store_manager, login_required
 
@@ -10,6 +11,7 @@ app.secret_key = "replace_with_a_random_secret_key"
 
 db_init(app)
 
+register_routes(app)
 
 # default location for our url
 @app.route("/")

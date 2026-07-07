@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Admin Stats</title>
+    </head>
+    <body>
+        <h1>Admin Stats</h1>
+        <table border="1">
+            <tr><td>Total Users</td><td>{{ total_users }}</td></tr>
+            <tr><td>Total Admins</td><td>{{ total_admins }}</td></tr>
+            <tr><td>Total Store Managers</td><td>{{ total_store_managers }}</td></tr>
+            <tr><td>Total Grocery Items</td><td>{{ total_items }}</td></tr>
+            <tr><td>Out of Stock Items</td><td>{{ out_of_stock }}</td></tr>
+            <tr><td>Total Purchases</td><td>{{ total_purchases }}</td></tr>
+            <tr><td>Total Quantity Sold</td><td>{{ total_quantity_sold }}</td></tr>
+            <tr><td>Total Sales ($)</td><td>{{ total_sales }}</td></tr>
+        </table>
+        <a href="/dashboard">Back to Dashboard</a>
+    </body>
+</html>
