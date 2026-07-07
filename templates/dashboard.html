@@ -4,8 +4,28 @@
         <title>Dashboard</title>
     </head>
     <body>
+        <nav>
+            <a href="/">Logout</a>
+            <form style="display:inline" method="get" action="/dashboard">
+                <input type="text" name="search" placeholder="Search items..." />
+                <button type="submit">Search</button>
+            </form>
+        </nav>
         <h1>Dashboard</h1>
         <p>Welcome to your dashboard!</p>
         <p>Good to see you, {{username}}!</p>
+
+        <h2>Grocery Items</h2>
+        <a href="/grocery/create">Add New Item</a>
+        <ul>
+            {% for item in grocery_items %}
+            <li>
+                {{ item.name }} - ${{ item.price }}
+                {% if item.stock > 0 %}({{ item.stock }} in stock){% else %}(Out of stock){% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="/history/{{ username }}">View Purchase History</a>
     </body>
 </html>
