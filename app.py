@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 
 from models import GroceryItem, Purchase, User, db, db_init
+# from helpers import is_loggedin, is_allowed_edit, current_user, is_admin, is_store_manager, login_required
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ db_init(app)
 @app.route("/")
 def home():
     return render_template("homepage.html")
+    # return render_template("homepage.html", is_loggedin=is_loggedin())
 
 
 # list examples
@@ -46,6 +48,15 @@ def dashboard():
     return render_template("dashboard.html", username=username)
 
 
+# proper dashboard with helpers and session — uncomment and comment out the original:
+# @app.route("/dashboard", methods=["GET"])
+# def dashboard():
+#     if not is_loggedin():
+#         return redirect(url_for("login"))
+#     grocery_items = GroceryItem.query.all()
+#     return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items, allowed_to_edit=is_allowed_edit())
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -53,6 +64,7 @@ def register():
         password = request.form["password"]
 
         user = User(username=username, password=password)
+        # user = User(username=username, password=password, role="user")
         db.session.add(user)
         db.session.commit()
         return redirect(url_for("login"))
@@ -67,6 +79,17 @@ def register():
 def users():
     all_users = User.query.all()
     return render_template("allusers.html", users=all_users)
+
+
+# proper version with search — uncomment and comment out the original:
+# @app.route("/users")
+# def users():
+#     search = request.args.get("search", "")
+#     if search:
+#         all_users = User.query.filter(User.username.contains(search)).all()
+#     else:
+#         all_users = User.query.all()
+#     return render_template("allusers.html", users=all_users, query=search)
 
 
 # dynamic route now:
@@ -86,9 +109,22 @@ def delete_user(user_id):
     return redirect(url_for("users"))
 
 
+# proper version with admin check — uncomment and comment out the original:
+# @app.route("/delete_user/<int:user_id>", methods=["POST"])
+# def delete_user(user_id):
+#     if not is_admin():
+#         return redirect(url_for("dashboard"))
+#     user = db.session.get(User, user_id)
+#     if user:
+#         db.session.delete(user)
+#         db.session.commit()
+#     return redirect(url_for("users"))
+
+
 """
 Session-based login / logout / dashboard (uncomment and comment out the originals to use)
 Replace the secret_key above with a real random key before using in production.
+Uncomment 'from helpers import ...' at the top first.
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -113,10 +149,37 @@ def logout():
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
-    if "user_id" not in session:
+    if not is_loggedin():
         return redirect(url_for("login"))
     grocery_items = GroceryItem.query.all()
-    return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items)
+    return render_template("dashboard.html", username=session["username"], grocery_items=grocery_items, allowed_to_edit=is_allowed_edit())
+"""
+
+"""
+Helper functions — move to app.py (or uncomment from helpers import ... at the top).
+
+from flask import session
+from models import User
+
+def is_loggedin():
+    return "user_id" in session
+
+def current_user():
+    user_id = session.get("user_id")
+    if user_id:
+        return User.query.get(user_id)
+
+def is_admin():
+    return session.get("role") == "admin"
+
+def is_store_manager():
+    return session.get("role") == "store_manager"
+
+def is_allowed_edit():
+    return session.get("role") in ("admin", "store_manager")
+
+def login_required():
+    return is_loggedin()
 """
 
 if __name__ == "__main__":
